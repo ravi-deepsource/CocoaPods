@@ -1,4 +1,4 @@
-require_relative 'fixture'
+require_relative "fixture"
 
 # README!
 #

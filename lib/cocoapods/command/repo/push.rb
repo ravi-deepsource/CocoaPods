@@ -1,12 +1,12 @@
-require 'tempfile'
-require 'fileutils'
-require 'active_support/core_ext/string/inflections'
+require "tempfile"
+require "fileutils"
+require "active_support/core_ext/string/inflections"
 
 module Pod
   class Command
     class Repo < Command
       class Push < Repo
-        self.summary = 'Push new specifications to a spec-repo'
+        self.summary = "Push new specifications to a spec-repo"
 
         self.description = <<-DESC
         Validates `NAME.podspec` or `*.podspec` in the current working dir,
@@ -16,57 +16,57 @@ module Pod
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('REPO', true),
-          CLAide::Argument.new('NAME.podspec', false),
+          CLAide::Argument.new("REPO", true),
+          CLAide::Argument.new("NAME.podspec", false)
         ]
 
         def self.options
           [
-            ['--allow-warnings', 'Allows pushing even if there are warnings'],
-            ['--use-libraries', 'Linter uses static libraries to install the spec'],
-            ['--use-modular-headers', 'Lint uses modular headers during installation'],
-            ["--sources=#{Pod::TrunkSource::TRUNK_REPO_URL}", 'The sources from which to pull dependent pods ' \
-             '(defaults to all available repos). Multiple sources must be comma-delimited'],
-            ['--local-only', 'Does not perform the step of pushing REPO to its remote'],
-            ['--no-private', 'Lint includes checks that apply only to public repos'],
-            ['--skip-import-validation', 'Lint skips validating that the pod can be imported'],
-            ['--skip-tests', 'Lint skips building and running tests during validation'],
-            ['--commit-message="Fix bug in pod"', 'Add custom commit message. Opens default editor if no commit ' \
-              'message is specified'],
-            ['--use-json', 'Convert the podspec to JSON before pushing it to the repo'],
-            ['--swift-version=VERSION', 'The `SWIFT_VERSION` that should be used when linting the spec. ' \
-             'This takes precedence over the Swift versions specified by the spec or a `.swift-version` file'],
-            ['--no-overwrite', 'Disallow pushing that would overwrite an existing spec'],
+            ["--allow-warnings", "Allows pushing even if there are warnings"],
+            ["--use-libraries", "Linter uses static libraries to install the spec"],
+            ["--use-modular-headers", "Lint uses modular headers during installation"],
+            ["--sources=#{Pod::TrunkSource::TRUNK_REPO_URL}", "The sources from which to pull dependent pods " \
+             "(defaults to all available repos). Multiple sources must be comma-delimited"],
+            ["--local-only", "Does not perform the step of pushing REPO to its remote"],
+            ["--no-private", "Lint includes checks that apply only to public repos"],
+            ["--skip-import-validation", "Lint skips validating that the pod can be imported"],
+            ["--skip-tests", "Lint skips building and running tests during validation"],
+            ['--commit-message="Fix bug in pod"', "Add custom commit message. Opens default editor if no commit " \
+              "message is specified"],
+            ["--use-json", "Convert the podspec to JSON before pushing it to the repo"],
+            ["--swift-version=VERSION", "The `SWIFT_VERSION` that should be used when linting the spec. " \
+             "This takes precedence over the Swift versions specified by the spec or a `.swift-version` file"],
+            ["--no-overwrite", "Disallow pushing that would overwrite an existing spec"]
           ].concat(super)
         end
 
         def initialize(argv)
-          @allow_warnings = argv.flag?('allow-warnings')
-          @local_only = argv.flag?('local-only')
+          @allow_warnings = argv.flag?("allow-warnings")
+          @local_only = argv.flag?("local-only")
           @repo = argv.shift_argument
           @source = source_for_repo
-          @source_urls = argv.option('sources', config.sources_manager.all.map(&:url).append(Pod::TrunkSource::TRUNK_REPO_URL).uniq.join(',')).split(',')
+          @source_urls = argv.option("sources", config.sources_manager.all.map(&:url).append(Pod::TrunkSource::TRUNK_REPO_URL).uniq.join(",")).split(",")
           @podspec = argv.shift_argument
-          @use_frameworks = !argv.flag?('use-libraries')
-          @use_modular_headers = argv.flag?('use-modular-headers', false)
-          @private = argv.flag?('private', true)
-          @message = argv.option('commit-message')
-          @commit_message = argv.flag?('commit-message', false)
-          @use_json = argv.flag?('use-json')
-          @swift_version = argv.option('swift-version', nil)
-          @skip_import_validation = argv.flag?('skip-import-validation', false)
-          @skip_tests = argv.flag?('skip-tests', false)
-          @allow_overwrite = argv.flag?('overwrite', true)
+          @use_frameworks = !argv.flag?("use-libraries")
+          @use_modular_headers = argv.flag?("use-modular-headers", false)
+          @private = argv.flag?("private", true)
+          @message = argv.option("commit-message")
+          @commit_message = argv.flag?("commit-message", false)
+          @use_json = argv.flag?("use-json")
+          @swift_version = argv.option("swift-version", nil)
+          @skip_import_validation = argv.flag?("skip-import-validation", false)
+          @skip_tests = argv.flag?("skip-tests", false)
+          @allow_overwrite = argv.flag?("overwrite", true)
           super
         end
 
         def validate!
           super
-          help! 'A spec-repo name or url is required.' unless @repo
+          help! "A spec-repo name or url is required." unless @repo
           unless @source && @source.repo.directory?
             raise Informative,
-                  "Unable to find the `#{@repo}` repo. " \
-                  'If it has not yet been cloned, add it via `pod repo add`.'
+              "Unable to find the `#{@repo}` repo. " \
+              "If it has not yet been cloned, add it via `pod repo add`."
           end
         end
 
@@ -92,13 +92,13 @@ module Pod
         # Open default editor to allow users to enter commit message
         #
         def open_editor
-          return if ENV['EDITOR'].nil?
+          return if ENV["EDITOR"].nil?
 
-          file = Tempfile.new('cocoapods')
-          File.chmod(0777, file.path)
+          file = Tempfile.new("cocoapods")
+          File.chmod(0o777, file.path)
           file.close
 
-          system("#{ENV['EDITOR']} #{file.path}")
+          system("#{ENV["EDITOR"]} #{file.path}")
           @message = File.read file.path
         end
 
@@ -107,31 +107,31 @@ module Pod
         #
         def check_if_push_allowed
           if @source.is_a?(CDNSource)
-            raise Informative, 'Cannot push to a CDN source, as it is read-only.'
+            raise Informative, "Cannot push to a CDN source, as it is read-only."
           end
 
-          remotes, = Executable.capture_command('git', %w(remote --verbose), :capture => :merge, :chdir => repo_dir)
+          remotes, = Executable.capture_command("git", %w[remote --verbose], capture: :merge, chdir: repo_dir)
           master_repo_urls = [
-            'git@github.com:CocoaPods/Specs.git',
-            'https://github.com/CocoaPods/Specs.git',
+            "git@github.com:CocoaPods/Specs.git",
+            "https://github.com/CocoaPods/Specs.git"
           ]
-          is_master_repo = master_repo_urls.any? do |url|
+          is_master_repo = master_repo_urls.any? { |url|
             remotes.include?(url)
-          end
+          }
 
           if is_master_repo
-            raise Informative, 'To push to the CocoaPods master repo use ' \
+            raise Informative, "To push to the CocoaPods master repo use " \
               "the `pod trunk push` command.\n\nIf you are using a fork of " \
-              'the master repo for private purposes we recommend to migrate ' \
-              'to a clean private repo. To disable this check remove the ' \
-              'remote pointing to the CocoaPods master repo.'
+              "the master repo for private purposes we recommend to migrate " \
+              "to a clean private repo. To disable this check remove the " \
+              "remote pointing to the CocoaPods master repo."
           end
         end
 
         # Performs a full lint against the podspecs.
         #
         def validate_podspec_files
-          UI.puts "\nValidating #{'spec'.pluralize(count)}".yellow
+          UI.puts "\nValidating #{"spec".pluralize(count)}".yellow
           podspec_files.each do |podspec|
             validator = Validator.new(podspec, @source_urls)
             validator.allow_warnings = @allow_warnings
@@ -163,8 +163,8 @@ module Pod
         # @return [void]
         #
         def check_repo_status
-          porcelain_status, = Executable.capture_command('git', %w(status --porcelain), :capture => :merge, :chdir => repo_dir)
-          clean = porcelain_status == ''
+          porcelain_status, = Executable.capture_command("git", %w[status --porcelain], capture: :merge, chdir: repo_dir)
+          clean = porcelain_status == ""
           raise Informative, "The repo `#{@repo}` at #{UI.path repo_dir} is not clean" unless clean
         end
 
@@ -174,7 +174,7 @@ module Pod
         #
         def update_repo
           UI.puts "Updating the `#{@repo}' repo\n".yellow
-          git!(%W(-C #{repo_dir} pull))
+          git!(%W[-C #{repo_dir} pull])
         end
 
         # Commits the podspecs to the source, which should be a git repo.
@@ -185,19 +185,19 @@ module Pod
         # @return [void]
         #
         def add_specs_to_repo
-          UI.puts "\nAdding the #{'spec'.pluralize(count)} to the `#{@repo}' repo\n".yellow
+          UI.puts "\nAdding the #{"spec".pluralize(count)} to the `#{@repo}' repo\n".yellow
           podspec_files.each do |spec_file|
             spec = Pod::Specification.from_file(spec_file)
             output_path = @source.pod_path(spec.name) + spec.version.to_s
             message = if @message && !@message.empty?
-                        @message
-                      elsif output_path.exist?
-                        "[Fix] #{spec}"
-                      elsif output_path.dirname.directory?
-                        "[Update] #{spec}"
-                      else
-                        "[Add] #{spec}"
-                      end
+              @message
+            elsif output_path.exist?
+              "[Fix] #{spec}"
+            elsif output_path.dirname.directory?
+              "[Update] #{spec}"
+            else
+              "[Add] #{spec}"
+            end
 
             if output_path.exist? && !@allow_overwrite
               raise Informative, "#{spec} already exists and overwriting has been disabled."
@@ -208,16 +208,16 @@ module Pod
             if @use_json
               json_file_name = "#{spec.name}.podspec.json"
               json_file = File.join(output_path, json_file_name)
-              File.open(json_file, 'w') { |file| file.write(spec.to_pretty_json) }
+              File.open(json_file, "w") { |file| file.write(spec.to_pretty_json) }
             else
               FileUtils.cp(spec_file, output_path)
             end
 
             # only commit if modified
-            if repo_git('status', '--porcelain').include?(spec.name)
+            if repo_git("status", "--porcelain").include?(spec.name)
               UI.puts " - #{message}"
-              repo_git('add', spec.name)
-              repo_git('commit', '--no-verify', '-m', message)
+              repo_git("add", spec.name)
+              repo_git("commit", "--no-verify", "-m", message)
             else
               UI.puts " - [No change] #{spec}"
             end
@@ -230,7 +230,7 @@ module Pod
         #
         def push_repo
           UI.puts "\nPushing the `#{@repo}' repo\n".yellow
-          repo_git('push', 'origin', 'HEAD')
+          repo_git("push", "origin", "HEAD")
         end
 
         #---------------------------------------------------------------------#
@@ -242,7 +242,7 @@ module Pod
         # @return result of calling the git! with args in repo_dir
         #
         def repo_git(*args)
-          git!(['-C', repo_dir] + args)
+          git!(["-C", repo_dir] + args)
         end
 
         # @return [Pathname] The directory of the repository.
@@ -259,7 +259,7 @@ module Pod
             raise Informative, "Couldn't find #{@podspec}" unless path.exist?
             [path]
           else
-            files = Pathname.glob('*.podspec{,.json}')
+            files = Pathname.glob("*.podspec{,.json}")
             raise Informative, "Couldn't find any podspec files in current directory" if files.empty?
             files
           end

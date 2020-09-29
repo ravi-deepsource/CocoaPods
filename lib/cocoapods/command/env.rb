@@ -1,14 +1,14 @@
-require 'cocoapods/user_interface/error_report'
+require "cocoapods/user_interface/error_report"
 
 module Pod
   class Command
     class Env < Command
-      self.summary = 'Display pod environment'
-      self.description = 'Display pod environment.'
+      self.summary = "Display pod environment"
+      self.description = "Display pod environment."
 
       def self.options
         options = []
-        options.concat(super.reject { |option, _| option == '--silent' })
+        options.concat(super.reject { |option, _| option == "--silent" })
       end
 
       def initialize(argv)
@@ -21,17 +21,17 @@ module Pod
       end
 
       def report
-        <<-EOS
-
-#{stack}
-#{executable_path}
-### Plugins
-
-```
-#{plugins_string}
-```
-#{markdown_podfile}
-EOS
+        <<~EOS
+          
+          #{stack}
+          #{executable_path}
+          ### Plugins
+          
+          ```
+          #{plugins_string}
+          ```
+          #{markdown_podfile}
+        EOS
       end
 
       def stack
@@ -49,13 +49,13 @@ EOS
       private
 
       def executable_path
-        <<-EOS
-### Installation Source
-
-```
-Executable Path: #{actual_path}
-```
-EOS
+        <<~EOS
+          ### Installation Source
+          
+          ```
+          Executable Path: #{actual_path}
+          ```
+        EOS
       end
 
       def actual_path

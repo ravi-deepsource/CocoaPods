@@ -6,20 +6,20 @@ module Pod
   # Redirects the messages to an internal store.
   #
   module UI
-    @output = ''
-    @warnings = ''
-    @next_input = ''
+    @output = ""
+    @warnings = ""
+    @next_input = ""
 
     class << self
       attr_accessor :output
       attr_accessor :warnings
       attr_accessor :next_input
 
-      def puts(message = '')
+      def puts(message = "")
         @output << "#{message}\n"
       end
 
-      def warn(message = '', _actions = [])
+      def warn(message = "", _actions = [])
         @warnings << "#{message}\n"
       end
 

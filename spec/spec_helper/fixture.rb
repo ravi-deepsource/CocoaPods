@@ -10,18 +10,18 @@ module SpecHelper
   end
 
   def self.test_repo_url
-    'https://github.com/CocoaPods/test_repo.git'
+    "https://github.com/CocoaPods/test_repo.git"
   end
 
   module Fixture
-    ROOT = Pathname('../fixtures').expand_path(__dir__)
+    ROOT = Pathname("../fixtures").expand_path(__dir__)
 
     def fixture(name)
       file = ROOT + name
       unless file.exist?
-        archive = Pathname.new(file.to_s + '.tar.gz')
+        archive = Pathname.new(file.to_s + ".tar.gz")
         if archive.exist?
-          Pod::Executable.capture_command('tar', ['-zxvf', archive], :capture => :none, :chdir => archive.dirname.to_s)
+          Pod::Executable.capture_command("tar", ["-zxvf", archive], capture: :none, chdir: archive.dirname.to_s)
         end
       end
       file

@@ -2,7 +2,7 @@ module Pod
   class Command
     class Cache < Command
       class List < Cache
-        self.summary = 'List the paths of pod caches for each known pod'
+        self.summary = "List the paths of pod caches for each known pod"
 
         self.description = <<-DESC
           Shows the content of the pods cache as a YAML tree output, organized by pod.
@@ -10,18 +10,18 @@ module Pod
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('NAME', false),
+          CLAide::Argument.new("NAME", false)
         ]
 
         def self.options
           [[
-            '--short', 'Only print the path relative to the cache root'
+            "--short", "Only print the path relative to the cache root"
           ]].concat(super)
         end
 
         def initialize(argv)
           @pod_name = argv.shift_argument
-          @short_output = argv.flag?('short')
+          @short_output = argv.flag?("short")
           super
         end
 

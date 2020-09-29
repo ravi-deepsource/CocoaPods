@@ -2,7 +2,7 @@ module Pod
   class Command
     class Lib < Command
       class Create < Lib
-        self.summary = 'Creates a new Pod'
+        self.summary = "Creates a new Pod"
 
         self.description = <<-DESC
           Creates a scaffold for the development of a new Pod named `NAME`
@@ -12,28 +12,28 @@ module Pod
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('NAME', true),
+          CLAide::Argument.new("NAME", true)
         ]
 
         def self.options
           [
-            ['--template-url=URL', 'The URL of the git repo containing a compatible template'],
+            ["--template-url=URL", "The URL of the git repo containing a compatible template"]
           ].concat(super)
         end
 
         def initialize(argv)
           @name = argv.shift_argument
-          @template_url = argv.option('template-url', TEMPLATE_REPO)
+          @template_url = argv.option("template-url", TEMPLATE_REPO)
           super
           @additional_args = argv.remainder!
         end
 
         def validate!
           super
-          help! 'A name for the Pod is required.' unless @name
-          help! 'The Pod name cannot contain spaces.' if @name =~ /\s/
-          help! 'The Pod name cannot contain plusses.' if @name =~ /\+/
-          help! "The Pod name cannot begin with a '.'" if @name[0, 1] == '.'
+          help! "A name for the Pod is required." unless @name
+          help! "The Pod name cannot contain spaces." if /\s/.match?(@name)
+          help! "The Pod name cannot contain plusses." if /\+/.match?(@name)
+          help! "The Pod name cannot begin with a '.'" if @name[0, 1] == "."
         end
 
         def run
@@ -51,9 +51,9 @@ module Pod
         extend Executable
         executable :git
 
-        TEMPLATE_REPO = 'https://github.com/CocoaPods/pod-template.git'.freeze
-        TEMPLATE_INFO_URL = 'https://github.com/CocoaPods/pod-template'.freeze
-        CREATE_NEW_POD_INFO_URL = 'https://guides.cocoapods.org/making/making-a-cocoapod'.freeze
+        TEMPLATE_REPO = "https://github.com/CocoaPods/pod-template.git".freeze
+        TEMPLATE_INFO_URL = "https://github.com/CocoaPods/pod-template".freeze
+        CREATE_NEW_POD_INFO_URL = "https://guides.cocoapods.org/making/making-a-cocoapod".freeze
 
         # Clones the template from the remote in the working directory using
         # the name of the Pod.
@@ -62,7 +62,7 @@ module Pod
         #
         def clone_template
           UI.section("Cloning `#{template_repo_url}` into `#{@name}`.") do
-            git! ['clone', template_repo_url, @name]
+            git! ["clone", template_repo_url, @name]
           end
         end
 
@@ -73,10 +73,10 @@ module Pod
         def configure_template
           UI.section("Configuring #{@name} template.") do
             Dir.chdir(@name) do
-              if File.exist?('configure')
-                system({ 'COCOAPODS_VERSION' => Pod::VERSION }, './configure', @name, *@additional_args)
+              if File.exist?("configure")
+                system({"COCOAPODS_VERSION" => Pod::VERSION}, "./configure", @name, *@additional_args)
               else
-                UI.warn 'Template does not have a configure file.'
+                UI.warn "Template does not have a configure file."
               end
             end
           end

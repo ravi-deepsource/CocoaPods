@@ -5,13 +5,13 @@ module SpecHelper
     end
 
     def command(*argv)
-      argv << '--no-ansi'
+      argv << "--no-ansi"
       Pod::Command.parse(argv)
     end
 
     def run_command(*args)
       Dir.chdir(SpecHelper.temporary_directory) do
-        Pod::UI.output = ''
+        Pod::UI.output = ""
         # @todo Remove this once all cocoapods has
         # been converted to use the UI.puts
         config_silent = config.silent?

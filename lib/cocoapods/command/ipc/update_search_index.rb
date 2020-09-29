@@ -2,7 +2,7 @@ module Pod
   class Command
     class IPC < Command
       class UpdateSearchIndex < IPC
-        self.summary = 'Updates the search index'
+        self.summary = "Updates the search index"
         self.description = <<-DESC
           Updates the search index and prints its path to standard output.
           The search index is a YAML encoded dictionary where the keys

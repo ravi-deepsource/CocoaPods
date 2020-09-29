@@ -2,7 +2,7 @@ module Pod
   class Command
     class Cache < Command
       class Clean < Cache
-        self.summary = 'Remove the cache for pods'
+        self.summary = "Remove the cache for pods"
 
         self.description = <<-DESC
           Remove the cache for a given pod, or clear the cache completely.
@@ -15,18 +15,18 @@ module Pod
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('NAME', false),
+          CLAide::Argument.new("NAME", false)
         ]
 
         def self.options
           [[
-            '--all', 'Remove all the cached pods without asking'
+            "--all", "Remove all the cached pods without asking"
           ]].concat(super)
         end
 
         def initialize(argv)
           @pod_name = argv.shift_argument
-          @wipe_all = argv.flag?('all')
+          @wipe_all = argv.flag?("all")
           super
         end
 
@@ -43,7 +43,7 @@ module Pod
             elsif cache_descriptors.count > 1 && !@wipe_all
               # Ask which to remove
               choices = cache_descriptors.map { |c| "#{@pod_name} v#{c[:version]} (#{pod_type(c)})" }
-              index = UI.choose_from_array(choices, 'Which pod cache do you want to remove?')
+              index = UI.choose_from_array(choices, "Which pod cache do you want to remove?")
               remove_caches([cache_descriptors[index]])
             else
               # Remove all found cache of this pod
@@ -56,7 +56,7 @@ module Pod
           super
           if @pod_name.nil? && !@wipe_all
             # Security measure, to avoid removing the pod cache too agressively by mistake
-            help! 'You should either specify a pod name or use the --all flag'
+            help! "You should either specify a pod name or use the --all flag"
           end
         end
 

@@ -7,9 +7,9 @@ module Bacon
     define_method(:run_requirement) do |description, spec|
       ::SpecHelper.reset_config_instance
 
-      ::Pod::UI.output = ''
-      ::Pod::UI.warnings = ''
-      ::Pod::UI.next_input = ''
+      ::Pod::UI.output = ""
+      ::Pod::UI.warnings = ""
+      ::Pod::UI.next_input = ""
       # The following prevents a nasty behaviour where the increments are not
       # balanced when testing informative which might lead to sections not
       # being printed to the output as they are too nested.

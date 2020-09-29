@@ -2,18 +2,18 @@ module Pod
   class Command
     class Repo < Command
       class List < Repo
-        self.summary = 'List repos'
+        self.summary = "List repos"
 
         self.description = <<-DESC
             List the repos from the local spec-repos directory at `#{Config.instance.repos_dir}`.
         DESC
 
         def self.options
-          [['--count-only', 'Show the total number of repos']].concat(super)
+          [["--count-only", "Show the total number of repos"]].concat(super)
         end
 
         def initialize(argv)
-          @count_only = argv.flag?('count-only')
+          @count_only = argv.flag?("count-only")
           super
         end
 
@@ -46,11 +46,11 @@ module Pod
         #
         def print_source(source)
           if source.is_a?(Pod::CDNSource)
-            UI.puts '- Type: CDN'
+            UI.puts "- Type: CDN"
           elsif source.git?
-            branch_name, = Executable.capture_command('git', %w(name-rev --name-only HEAD), :capture => :out, :chdir => source.repo)
+            branch_name, = Executable.capture_command("git", %w[name-rev --name-only HEAD], capture: :out, chdir: source.repo)
             branch_name.strip!
-            branch_name = 'unknown' if branch_name.empty?
+            branch_name = "unknown" if branch_name.empty?
             UI.puts "- Type: git (#{branch_name})"
           else
             UI.puts "- Type: #{source.type}"
@@ -85,7 +85,7 @@ module Pod
         #
         def print_count_of_sources(sources)
           number_of_repos = sources.length
-          repo_string = number_of_repos != 1 ? 'repos' : 'repo'
+          repo_string = number_of_repos != 1 ? "repos" : "repo"
           UI.puts "#{number_of_repos} #{repo_string}".green
         end
       end

@@ -2,14 +2,14 @@ module Pod
   class Command
     class Repo < Command
       class Remove < Repo
-        self.summary = 'Remove a spec repo'
+        self.summary = "Remove a spec repo"
 
         self.description = <<-DESC
           Deletes the remote named `NAME` from the local spec-repos directory at `#{Config.instance.repos_dir}`.
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('NAME', true),
+          CLAide::Argument.new("NAME", true)
         ]
 
         def initialize(argv)
@@ -19,10 +19,12 @@ module Pod
 
         def validate!
           super
-          help! 'Deleting a repo needs a `NAME`.' unless @name
+          help! "Deleting a repo needs a `NAME`." unless @name
           help! "repo #{@name} does not exist" unless File.directory?(dir)
-          help! "You do not have permission to delete the #{@name} repository." \
-                'Perhaps try prefixing this command with sudo.' unless File.writable?(dir)
+          unless File.writable?(dir)
+            help! "You do not have permission to delete the #{@name} repository." \
+                  "Perhaps try prefixing this command with sudo."
+          end
         end
 
         def run

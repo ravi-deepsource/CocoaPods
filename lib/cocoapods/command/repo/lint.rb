@@ -2,7 +2,7 @@ module Pod
   class Command
     class Repo < Command
       class Lint < Repo
-        self.summary = 'Validates all specs in a repo'
+        self.summary = "Validates all specs in a repo"
 
         self.description = <<-DESC
           Lints the spec-repo `NAME`. If a directory is provided it is assumed
@@ -11,18 +11,18 @@ module Pod
         DESC
 
         self.arguments = [
-          CLAide::Argument.new(%w(NAME DIRECTORY), false),
+          CLAide::Argument.new(%w[NAME DIRECTORY], false)
         ]
 
         def self.options
           [
-            ['--only-errors', 'Lint presents only the errors'],
+            ["--only-errors", "Lint presents only the errors"]
           ].concat(super)
         end
 
         def initialize(argv)
           @name = argv.shift_argument
-          @only_errors = argv.flag?('only-errors')
+          @only_errors = argv.flag?("only-errors")
           super
         end
 
@@ -35,14 +35,14 @@ module Pod
         #
         def run
           sources = if @name
-                      if File.exist?(@name)
-                        [Source.new(Pathname(@name))]
-                      else
-                        config.sources_manager.sources([@name])
-                      end
-                    else
-                      config.sources_manager.all
-                    end
+            if File.exist?(@name)
+              [Source.new(Pathname(@name))]
+            else
+              config.sources_manager.sources([@name])
+            end
+          else
+            config.sources_manager.all
+          end
 
           sources.each do |source|
             source.verify_compatibility!
@@ -50,7 +50,7 @@ module Pod
 
             validator = Source::HealthReporter.new(source.repo)
             validator.pre_check do |_name, _version|
-              UI.print '.'
+              UI.print "."
             end
             report = validator.analyze
             UI.puts
@@ -58,19 +58,19 @@ module Pod
 
             report.pods_by_warning.each do |message, versions_by_name|
               UI.puts "-> #{message}".yellow
-              versions_by_name.each { |name, versions| UI.puts "  - #{name} (#{versions * ', '})" }
+              versions_by_name.each { |name, versions| UI.puts "  - #{name} (#{versions * ", "})" }
               UI.puts
             end
 
             report.pods_by_error.each do |message, versions_by_name|
               UI.puts "-> #{message}".red
-              versions_by_name.each { |name, versions| UI.puts "  - #{name} (#{versions * ', '})" }
+              versions_by_name.each { |name, versions| UI.puts "  - #{name} (#{versions * ", "})" }
               UI.puts
             end
 
             UI.puts "Analyzed #{report.analyzed_paths.count} podspecs files.\n\n"
             if report.pods_by_error.count.zero?
-              UI.puts 'All the specs passed validation.'.green << "\n\n"
+              UI.puts "All the specs passed validation.".green << "\n\n"
             else
               raise Informative, "#{report.pods_by_error.count} podspecs failed validation."
             end

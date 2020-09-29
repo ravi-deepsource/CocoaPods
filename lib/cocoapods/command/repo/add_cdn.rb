@@ -2,7 +2,7 @@ module Pod
   class Command
     class Repo < Command
       class AddCDN < Repo
-        self.summary = 'Add a spec repo backed by a CDN'
+        self.summary = "Add a spec repo backed by a CDN"
 
         self.description = <<-DESC
           Add `URL` to the local spec-repos directory at `#{Config.instance.repos_dir}`. The
@@ -10,8 +10,8 @@ module Pod
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('NAME',   true),
-          CLAide::Argument.new('URL',    true),
+          CLAide::Argument.new("NAME", true),
+          CLAide::Argument.new("URL", true)
         ]
 
         def initialize(argv)
@@ -23,11 +23,11 @@ module Pod
         def validate!
           super
           unless @name && @url
-            help! 'Adding a repo needs a `NAME` and a `URL`.'
+            help! "Adding a repo needs a `NAME` and a `URL`."
           end
-          if @name == 'master'
+          if @name == "master"
             raise Informative,
-                  'To setup the master specs repo, please run `pod setup`.'
+              "To setup the master specs repo, please run `pod setup`."
           end
         end
 
@@ -47,7 +47,7 @@ module Pod
         #
         def save_url
           dir.mkpath
-          File.open(dir + '.url', 'w') { |file| file.write(@url) }
+          File.open(dir + ".url", "w") { |file| file.write(@url) }
         rescue => e
           raise Informative, "Could not create '#{config.repos_dir}', the CocoaPods repo cache directory.\n" \
               "#{e.class.name}: #{e.message}"

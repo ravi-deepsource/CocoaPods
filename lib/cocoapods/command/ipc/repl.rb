@@ -6,7 +6,7 @@ module Pod
 
         END_OF_OUTPUT_SIGNAL = "\n\r".freeze
 
-        self.summary = 'The repl listens to commands on standard input'
+        self.summary = "The repl listens to commands on standard input"
         self.description = <<-DESC
           The repl listens to commands on standard input and prints their
           result to standard output.

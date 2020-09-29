@@ -7,7 +7,7 @@ module Pod
         module Options
           def options
             [
-              ['--project-directory=/project/dir/', 'The path to the root of the project directory'],
+              ["--project-directory=/project/dir/", "The path to the root of the project directory"]
             ].concat(super)
           end
         end
@@ -17,7 +17,7 @@ module Pod
         end
 
         def initialize(argv)
-          if project_directory = argv.option('project-directory')
+          if project_directory = argv.option("project-directory")
             @project_directory = Pathname.new(project_directory).expand_path
           end
           config.installation_root = @project_directory

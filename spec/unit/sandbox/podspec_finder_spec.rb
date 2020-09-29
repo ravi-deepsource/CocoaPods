@@ -1,4 +1,4 @@
-require File.expand_path('../../../spec_helper', __FILE__)
+require File.expand_path("../../../spec_helper", __FILE__)
 
 module Pod
   describe Sandbox::PodspecFinder do
@@ -11,29 +11,29 @@ module Pod
       @root.rmtree
     end
 
-    it 'returns an empty hash when no podspecs are found' do
+    it "returns an empty hash when no podspecs are found" do
       @finder.podspecs.should.be.empty
     end
 
-    it 'ignores podspecs not in the root' do
-      path = @root + 'Dir/RestKit.podspec.json'
+    it "ignores podspecs not in the root" do
+      path = @root + "Dir/RestKit.podspec.json"
       path.parent.mkpath
-      path.open('w') { |f| f << '{"name":"RestKit"}' }
+      path.open("w") { |f| f << '{"name":"RestKit"}' }
 
       @finder.podspecs.should.be.empty
     end
 
-    it 'groups found podspecs by name' do
-      @root.+('Realm.podspec.json').open('w') { |f| f << '{"name":"Realm"}' }
-      @root.+('RealmSwift.podspec').open('w') { |f| f << 'Pod::Specification.new { |s| s.name = "RealmSwift" }' }
+    it "groups found podspecs by name" do
+      @root.+("Realm.podspec.json").open("w") { |f| f << '{"name":"Realm"}' }
+      @root.+("RealmSwift.podspec").open("w") { |f| f << 'Pod::Specification.new { |s| s.name = "RealmSwift" }' }
 
       @finder.podspecs.should == {
-        'Realm' => Pod::Specification.new { |s| s.name = 'Realm' },
-        'RealmSwift' => Pod::Specification.new { |s| s.name = 'RealmSwift' },
+        "Realm" => Pod::Specification.new { |s| s.name = "Realm" },
+        "RealmSwift" => Pod::Specification.new { |s| s.name = "RealmSwift" }
       }
     end
 
-    it 'caches the podspecs' do
+    it "caches the podspecs" do
       @finder.podspecs
       Pathname.expects(:glob).never
       @finder.podspecs

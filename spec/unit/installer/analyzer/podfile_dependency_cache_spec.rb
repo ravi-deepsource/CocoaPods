@@ -1,32 +1,32 @@
-require File.expand_path('../../../../spec_helper', __FILE__)
+require File.expand_path("../../../../spec_helper", __FILE__)
 
 module Pod
   class Installer
     class Analyzer
       describe PodfileDependencyCache do
-        describe '.from_podfile' do
-          it 'returns a warmed cache' do
-            podfile = Podfile.new do
-              pod 'A'
-              target 'T1' do
-                pod 'B'
+        describe ".from_podfile" do
+          it "returns a warmed cache" do
+            podfile = Podfile.new {
+              pod "A"
+              target "T1" do
+                pod "B"
 
-                target 'T1T' do
+                target "T1T" do
                   inherit! :search_paths
 
-                  pod 'C'
+                  pod "C"
                 end
               end
-              target 'T2' do
-                pod 'B'
+              target "T2" do
+                pod "B"
 
-                target 'T2T' do
+                target "T2T" do
                   inherit! :none
 
-                  pod 'D'
+                  pod "D"
                 end
               end
-            end
+            }
 
             cache = PodfileDependencyCache.from_podfile(podfile)
             cache.podfile_dependencies.should == podfile.dependencies

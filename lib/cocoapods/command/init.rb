@@ -1,10 +1,10 @@
-require 'xcodeproj'
-require 'active_support/core_ext/string/strip'
+require "xcodeproj"
+require "active_support/core_ext/string/strip"
 
 module Pod
   class Command
     class Init < Command
-      self.summary = 'Generate a Podfile for the current directory'
+      self.summary = "Generate a Podfile for the current directory"
       self.description = <<-DESC
         Creates a Podfile for the current directory if none currently exists. If
         an `XCODEPROJ` project file is specified or if there is only a single
@@ -17,32 +17,32 @@ module Pod
         `#{Config.instance.templates_dir}` folder.
       DESC
       self.arguments = [
-        CLAide::Argument.new('XCODEPROJ', :false),
+        CLAide::Argument.new("XCODEPROJ", :false)
       ]
 
       def initialize(argv)
-        @podfile_path = Pathname.pwd + 'Podfile'
+        @podfile_path = Pathname.pwd + "Podfile"
         @project_path = argv.shift_argument
-        @project_paths = Pathname.pwd.children.select { |pn| pn.extname == '.xcodeproj' }
+        @project_paths = Pathname.pwd.children.select { |pn| pn.extname == ".xcodeproj" }
         super
       end
 
       def validate!
         super
-        raise Informative, 'Existing Podfile found in directory' unless config.podfile_path_in_dir(Pathname.pwd).nil?
+        raise Informative, "Existing Podfile found in directory" unless config.podfile_path_in_dir(Pathname.pwd).nil?
         if @project_path
           help! "Xcode project at #{@project_path} does not exist" unless File.exist? @project_path
           project_path = @project_path
         else
-          raise Informative, 'No Xcode project found, please specify one' unless @project_paths.length > 0
-          raise Informative, 'Multiple Xcode projects found, please specify one' unless @project_paths.length == 1
+          raise Informative, "No Xcode project found, please specify one" unless @project_paths.length > 0
+          raise Informative, "Multiple Xcode projects found, please specify one" unless @project_paths.length == 1
           project_path = @project_paths.first
         end
         @xcode_project = Xcodeproj::Project.open(project_path)
       end
 
       def run
-        @podfile_path.open('w') { |f| f << podfile_template(@xcode_project) }
+        @podfile_path.open("w") { |f| f << podfile_template(@xcode_project) }
       end
 
       private
@@ -53,7 +53,7 @@ module Pod
       # @return [String] the text of the Podfile for the provided project
       #
       def podfile_template(project)
-        podfile = ''
+        podfile = ""
         podfile << "project '#{@project_path}'\n\n" if @project_path
         podfile << <<-PLATFORM.strip_heredoc
           # Uncomment the next line to define a global platform for your project
@@ -64,9 +64,9 @@ module Pod
         test_targets, app_targets = project.native_targets.sort_by { |t| t.name.downcase }.partition(&:test_target_type?)
 
         app_targets.each do |app_target|
-          test_targets_for_app = test_targets.select do |target|
+          test_targets_for_app = test_targets.select { |target|
             target.name.downcase.start_with?(app_target.name.downcase)
-          end
+          }
           podfile << target_module(app_target, test_targets_for_app)
         end
 
@@ -86,16 +86,16 @@ module Pod
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-         RUBY
+        RUBY
 
-        target_module << template_contents(config.default_podfile_path, '  ', "Pods for #{host.name}\n")
+        target_module << template_contents(config.default_podfile_path, "  ", "Pods for #{host.name}\n")
 
         tests.each do |test|
           target_module << "\n  target '#{test.name.gsub(/'/, "\\\\\'")}' do\n"
           unless Pod::AggregateTarget::EMBED_FRAMEWORKS_IN_HOST_TARGET_TYPES.include?(host.symbol_type) || test.symbol_type == :ui_test_bundle
             target_module << "    inherit! :search_paths\n"
           end
-          target_module << template_contents(config.default_test_podfile_path, '    ', 'Pods for testing')
+          target_module << template_contents(config.default_test_podfile_path, "    ", "Pods for testing")
           target_module << "\n  end\n"
         end
 

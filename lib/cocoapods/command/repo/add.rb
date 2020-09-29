@@ -2,7 +2,7 @@ module Pod
   class Command
     class Repo < Command
       class Add < Repo
-        self.summary = 'Add a spec repo'
+        self.summary = "Add a spec repo"
 
         self.description = <<-DESC
           Clones `URL` in the local spec-repos directory at `#{Config.instance.repos_dir}`. The
@@ -10,14 +10,14 @@ module Pod
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('NAME',   true),
-          CLAide::Argument.new('URL',    true),
-          CLAide::Argument.new('BRANCH', false),
+          CLAide::Argument.new("NAME", true),
+          CLAide::Argument.new("URL", true),
+          CLAide::Argument.new("BRANCH", false)
         ]
 
         def self.options
           [
-            ['--progress', 'Show the progress of cloning the spec repository'],
+            ["--progress", "Show the progress of cloning the spec repository"]
           ].concat(super)
         end
 
@@ -25,18 +25,18 @@ module Pod
           @name = argv.shift_argument
           @url = argv.shift_argument
           @branch = argv.shift_argument
-          @progress = argv.flag?('progress')
+          @progress = argv.flag?("progress")
           super
         end
 
         def validate!
           super
           unless @name && @url
-            help! 'Adding a repo needs a `NAME` and a `URL`.'
+            help! "Adding a repo needs a `NAME` and a `URL`."
           end
-          if @name == 'trunk'
+          if @name == "trunk"
             raise Informative,
-                  "Repo name `trunk` is reserved for CocoaPods' main spec repo accessed via CDN."
+              "Repo name `trunk` is reserved for CocoaPods' main spec repo accessed via CDN."
           end
         end
 
@@ -74,16 +74,16 @@ module Pod
         #
         def clone_repo
           changes = if @progress
-                      { :verbose => true }
-                    else
-                      {}
-                    end
+            {verbose: true}
+          else
+            {}
+          end
 
           config.with_changes(changes) do
             Dir.chdir(config.repos_dir) do
-              command = ['clone', @url]
-              command << '--progress' if @progress
-              command << '--' << @name
+              command = ["clone", @url]
+              command << "--progress" if @progress
+              command << "--" << @name
               git!(command)
             end
           end
@@ -94,7 +94,7 @@ module Pod
         # @return [void]
         #
         def checkout_branch
-          Dir.chdir(dir) { git!('checkout', @branch) } if @branch
+          Dir.chdir(dir) { git!("checkout", @branch) } if @branch
         end
       end
     end

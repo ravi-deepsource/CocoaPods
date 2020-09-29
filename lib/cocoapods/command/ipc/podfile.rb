@@ -4,10 +4,10 @@ module Pod
       class Podfile < IPC
         include ProjectDirectory
 
-        self.summary = 'Converts a Podfile to YAML'
-        self.description = 'Converts a Podfile to YAML and prints it to STDOUT.'
+        self.summary = "Converts a Podfile to YAML"
+        self.description = "Converts a Podfile to YAML and prints it to STDOUT."
         self.arguments = [
-          CLAide::Argument.new('PATH', true),
+          CLAide::Argument.new("PATH", true)
         ]
 
         def initialize(argv)
@@ -17,11 +17,11 @@ module Pod
 
         def validate!
           super
-          help! 'A Podfile path is required.' unless @path
+          help! "A Podfile path is required." unless @path
         end
 
         def run
-          require 'yaml'
+          require "yaml"
           podfile = Pod::Podfile.from_file(@path)
           output_pipe.puts podfile.to_yaml
         end

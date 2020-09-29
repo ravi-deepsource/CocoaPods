@@ -4,10 +4,10 @@ module Pod
       class PodfileJSON < IPC
         include ProjectDirectory
 
-        self.summary = 'Converts a Podfile to JSON'
-        self.description = 'Converts a Podfile to JSON and prints it to STDOUT.'
+        self.summary = "Converts a Podfile to JSON"
+        self.description = "Converts a Podfile to JSON and prints it to STDOUT."
         self.arguments = [
-          CLAide::Argument.new('PATH', true),
+          CLAide::Argument.new("PATH", true)
         ]
 
         def initialize(argv)
@@ -17,7 +17,7 @@ module Pod
 
         def validate!
           super
-          help! 'A Podfile path is required.' unless @path
+          help! "A Podfile path is required." unless @path
         end
 
         def run

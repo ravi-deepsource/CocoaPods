@@ -2,10 +2,10 @@ module Pod
   class Command
     class IPC < Command
       class Spec < IPC
-        self.summary = 'Converts a podspec to JSON'
-        self.description = 'Converts a podspec to JSON and prints it to STDOUT.'
+        self.summary = "Converts a podspec to JSON"
+        self.description = "Converts a podspec to JSON and prints it to STDOUT."
         self.arguments = [
-          CLAide::Argument.new('PATH', true),
+          CLAide::Argument.new("PATH", true)
         ]
 
         def initialize(argv)
@@ -15,11 +15,11 @@ module Pod
 
         def validate!
           super
-          help! 'A specification path is required.' unless @path
+          help! "A specification path is required." unless @path
         end
 
         def run
-          require 'json'
+          require "json"
           spec = Specification.from_file(@path)
           output_pipe.puts(spec.to_pretty_json)
         end

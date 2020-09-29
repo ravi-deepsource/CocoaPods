@@ -2,34 +2,34 @@ module Pod
   class Command
     class Spec < Command
       class Edit < Spec
-        self.summary = 'Edit a spec file'
+        self.summary = "Edit a spec file"
 
         self.description = <<-DESC
           Opens the podspec matching `QUERY` to be edited.
         DESC
 
         self.arguments = [
-          CLAide::Argument.new('QUERY', false),
+          CLAide::Argument.new("QUERY", false)
         ]
 
         def self.options
           [
-            ['--regex', 'Interpret the `QUERY` as a regular expression'],
-            ['--show-all', 'Pick from all versions of the given podspec'],
+            ["--regex", "Interpret the `QUERY` as a regular expression"],
+            ["--show-all", "Pick from all versions of the given podspec"]
           ].concat(super)
         end
 
         def initialize(argv)
-          @use_regex = argv.flag?('regex')
-          @show_all = argv.flag?('show-all')
+          @use_regex = argv.flag?("regex")
+          @show_all = argv.flag?("show-all")
           @query = argv.shift_argument
-          @query = @query.gsub('.podspec', '') unless @query.nil?
+          @query = @query.gsub(".podspec", "") unless @query.nil?
           super
         end
 
         def validate!
           super
-          help! 'A podspec name is required.' unless @query
+          help! "A podspec name is required." unless @query
           validate_regex!(@query) if @use_regex
         end
 
@@ -49,21 +49,21 @@ module Pod
         end
 
         def which_editor
-          editor = ENV['EDITOR']
+          editor = ENV["EDITOR"]
           # If an editor wasn't set, try to pick a sane default
           return editor unless editor.nil?
 
           editors = [
             # Find Sublime Text 2
-            'subl',
+            "subl",
             # Find Textmate
-            'mate',
+            "mate",
             # Find BBEdit / TextWrangler
-            'edit',
+            "edit",
             # Find Atom
-            'atom',
+            "atom",
             # Default to vim
-            'vim',
+            "vim"
           ]
           editor = editors.find { |e| Pod::Executable.which(e) }
           return editor if editor
@@ -79,7 +79,7 @@ module Pod
         def safe_exec(cmd, *args)
           # This buys us proper argument quoting and evaluation
           # of environment variables in the cmd parameter.
-          exec('/bin/sh', '-i', '-c', cmd + ' "$@"', '--', *args)
+          exec("/bin/sh", "-i", "-c", cmd + ' "$@"', "--", *args)
         end
       end
     end
